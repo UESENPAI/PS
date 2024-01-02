@@ -10,7 +10,7 @@ def boj1644():
             if sieve[i]:
                 for j in range(2*i, N+1, i): sieve[j] = False
 
-        return [i for i in range(2, N+1) if sieve[i] == True]
+        return [i for i in range(2, N+1) if sieve[i]]
 
     primes = era_seive(N)
     ans, fptr, bptr = 0, 0, 0
