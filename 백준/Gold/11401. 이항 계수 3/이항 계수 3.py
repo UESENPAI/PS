@@ -1,27 +1,29 @@
 import sys
+from functools import lru_cache
+input = sys.stdin.readline
 
-N, K = map(int, sys.stdin.readline().strip().split())
-MOD = 1000000007
+def boj11401():
+    N, K = map(int,input().strip().split())
+    div = 1000000007
 
-def mod_pow(x, n, mod):
-    if not n: return 1
-    elif n%2:
-        y = mod_pow(x, n-1, mod)
-        return (x * y) % mod
-    else:
-        y = mod_pow(x, n//2, mod)
-        return (y * y) % mod
+    @lru_cache
+    def factorial(N):
+        tmp = 1
+        for i in range(2, N + 1):
+            tmp *= i
+            tmp %= div
+        return tmp
 
-def mod_factorial(n, mod):
-    res = 1
-    for i in range(1, n+1):
-        res *= i
-        res %= mod
-    return res
+    def square(N, K):
+        if not K: return 1
+        elif K == 1: return N
+        tmp = square(N, K // 2)
+        if K % 2: return tmp**2 * N % div
+        else: return tmp**2 % div
 
-def nCk(n, k, mod):
-    if k > n: return 0
-    return (mod_factorial(n, mod) * mod_pow((mod_factorial(k, mod) * mod_factorial(n-k, mod)) % mod, mod-2, mod)) % mod
+    denominator = factorial(N)
+    numerator = factorial(N - K) * factorial(K) % div
 
-       
-print(nCk(N,K,MOD))
+    print(denominator * square(numerator, div-2) % div)
+
+if __name__ == '__main__': boj11401()
