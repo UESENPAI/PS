@@ -1,47 +1,50 @@
+import sys
 from collections import deque
-def bfs(si,sj):
-    q = deque()
-    vv = [[0]*5 for _ in range(5)]
+input = sys.stdin.readline
 
-    q.append((si,sj))
-    vv[si][sj]=1
-    cnt = 1
+def boj1941():
+    graph = [list(input().strip()) for _ in range(5)]
 
-    while q:
-        ci,cj = q.popleft()
-        for di,dj in ((-1,0),(1,0),(0,-1),(0,1)):
-            ni,nj = ci+di, cj+dj
-            if 0<=ni<5 and 0<=nj<5 and vv[ni][nj]==0 and v[ni][nj]==1:
-                q.append((ni,nj))
-                vv[ni][nj]=1
-                cnt+=1
-    return cnt==7
+    def unionfind(path):
+        parent = [i for i in range(25)]
+        
+        def find(x):
+            nonlocal parent
+            if parent[x] != x: parent[x] = find(parent[x])
+            return parent[x]
 
-def check():
-    for i in range(5):
-        for j in range(5):
-            if v[i][j]==1:
-                return bfs(i,j)
+        def union(a, b):
+            nonlocal parent
+            a, b = find(a), find(b)
+            if a < b: parent[b] = a
+            else: parent[a] = b
+        
+        for n in path:
+            x, y = n // 5, n % 5
+            for dx, dy in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < 5 and 0 <= ny < 5 and (nx * 5 + ny) in path: union(n, nx * 5 + ny)
 
-def dfs(n, cnt, scnt):
-    global ans
-    if cnt>7:                   # 가지치기: 이미 7명을 넘었으면 7공주 불가!
-        return
+        root = find(path[0])
+        for p in path[1:]:
+            if find(p) != root: return False
+        return True
 
-    if n == 25:
-        if cnt==7 and scnt>=4:  # 7명 그룹이고, 4명이상이 다솜파인 경우
-            if check():         # 인접했는지 체크해서 모두 인접시 정답+=1
-                ans+=1
-        return
+    def dfs(n, path):
+        nonlocal graph, ans
+        if len(path) > 7: return
 
-    v[n//5][n%5]=1              # 포함하는 경우 표시
-    dfs(n+1, cnt+1, scnt+int(arr[n//5][n%5]=='S'))
-    v[n//5][n%5]=0              # 원상복구
-    dfs(n+1, cnt, scnt)         # 포함하지 않는 경우
+        if n == 25:
+            if len(path) == 7 and sum(1 for i in path if graph[i // 5][i % 5] == 'S') >= 4:
+                if unionfind(path): ans.append(path[:])
+            return
+        dfs(n + 1, path + [n])
+        dfs(n + 1, path)
+        
+    
+    ans = []
+    isvisited = [[False]*5 for _ in range(5)]
+    dfs(0, [])
+    print(len(ans))
 
-arr = [input() for _ in range(5)]
-ans = 0
-v = [[0]*5 for _ in range(5)]
-# 학생번호(0~24), 포함학생수, 다솜파학생수
-dfs(0, 0, 0)
-print(ans)
+if __name__ == '__main__': boj1941()
