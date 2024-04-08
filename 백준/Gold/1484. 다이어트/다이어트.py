@@ -9,7 +9,7 @@ def boj1484():
         for xMy in range(1, N+1):
             if not N % xMy:
                 xPy = N // xMy
-                if not (xPy+xMy)%2 and not (xPy-xMy)%2:
+                if not (xPy-xMy)%2:
                     x, y = (xPy+xMy) >> 1, (xPy-xMy) >> 1
                     if y > 0: results.append(x)
 
