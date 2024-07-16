@@ -14,8 +14,7 @@ def boj1557():
             if not n % i:
                 p += 1
                 n //= i
-                while not n % i:
-                    n //= i
+                while not n % i: n //= i
         if n > 1: p += 1
         return -1 if p % 2 else 1
 
