@@ -15,6 +15,10 @@ def boj18291():
             exp >>= 1
         return result
 
-    for n in N: print(n) if n<2 else print(modpow(2, n-2))       
+    for n in N:
+        if n<2: print(n)
+        else:
+            exp = (n-2) % (MOD-1)
+            print(modpow(2, exp))       
 
 if __name__ == '__main__': boj18291()
