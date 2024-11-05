@@ -2,7 +2,7 @@ import sys
 input = sys.stdin.readline
 sys.setrecursionlimit(10**6)
 
-def boj14445():
+def boj2447():
     N=int(input().strip())
     
     def draw_stars(N):
@@ -16,7 +16,7 @@ def boj14445():
       for star in stars: L.append(star*3)
 
       return L
-    
+ 
     print('\n'.join(draw_stars(N)))
 
-if __name__ == "__main__": boj14445()
+if __name__ == "__main__": boj2447()
