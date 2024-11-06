@@ -1,56 +1,36 @@
 import sys
+input = sys.stdin.readline
 
-sudoku = []
-zeros = []
-for rowidx in range(9):
-    row = (list(map(int,sys.stdin.readline().strip().split())))
-    for colidx in range(9):
-        if row[colidx]==0:
-            zeros.append((rowidx, colidx))
-    sudoku.append(row)
+def boj2580():
+    graph = [list(map(int, input().strip().split())) for _ in range(9)]
 
-def checkRow(x, a):
-    global sudoku
-    for i in range(9):
-        if a == sudoku[x][i]:
-            return False
-    return True
+    blank = [(i, j) for i in range(9) for j in range(9) if not graph[i][j]]
 
-def checkCol(y, a):
-    global sudoku
-    for i in range(9):
-        if a == sudoku[i][y]:
-            return False
-    return True
+    def checkLine(idx, a, isrow=True):
+        for i in range(9):
+            if a == (graph[idx][i] if isrow else graph[i][idx]): return False
+        return True
 
-def checkRect(x, y, a):
-    global sudoku
-    nx = x // 3 * 3
-    ny = y // 3 * 3
-    for i in range(3):
-        for j in range(3):
-            if a == sudoku[nx+i][ny+j]:
-                return False
-    return True
+    def checkRect(x, y, a):
+        nx, ny = x // 3 * 3, y // 3 * 3
+        for i in range(3):
+            for j in range(3):
+                if a == graph[nx+i][ny+j]: return False
+        return True
 
-def displaysudoku(sudoku):
-    for row in sudoku:
-        print(' '.join(map(str, row)))
 
-def dfs(idx):
-    global sudoku, zeros
-    
-    if idx == len(zeros):
-        displaysudoku(sudoku)
-        exit(0)
+    def dfs(idx):
+        if idx == len(blank):
+            list(map(lambda row: print(*row), graph))
+            exit()
 
-    for i in range(1, 10):
-        x = zeros[idx][0]
-        y = zeros[idx][1]
+        for i in range(1, 10):
+            x, y = blank[idx][0], blank[idx][1]
+            if checkLine(x, i, True) and checkLine(y, i, False) and checkRect(x, y, i):
+                graph[x][y] = i
+                dfs(idx+1)
+                graph[x][y] = 0
+                
+    dfs(0)
 
-        if checkRow(x, i) and checkCol(y, i) and checkRect(x, y, i):
-            sudoku[x][y] = i
-            dfs(idx+1)
-            sudoku[x][y] = 0
-
-dfs(0)
+if __name__ == "__main__": boj2580()
