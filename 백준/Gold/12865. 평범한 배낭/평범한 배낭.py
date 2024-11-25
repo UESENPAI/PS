@@ -1,18 +1,15 @@
 import sys
+input = sys.stdin.readline
 
-N, K = map(int, sys.stdin.readline().strip().split())
+def boj12865():
+    N, K = map(int, input().split())
+    bag = [list(map(int, input().strip().split())) for _ in range(N)]
+    dp = [[0]*(K+1) for _ in range(N+1)]
 
-WV = [[0,0]]
-for _ in range(N): 
-    WV.append(list(map(int,sys.stdin.readline().strip().split())))
+    for i in range(1, N+1):
+        for j in range(1, K+1):
+            dp[i][j] = dp[i-1][j] if j < bag[i-1][0] else max(bag[i-1][1]+dp[i-1][j-bag[i-1][0]],dp[i-1][j])
 
-dp = [[0 for _ in range (K+1)] for _ in range (N+1)]
+    print(dp[N][K])
 
-for i in range(N+1):
-    for j in range(K+1):
-        if WV[i][0]>j:
-            dp[i][j] = dp[i-1][j]
-        else:
-            dp[i][j] = max(dp[i-1][j],dp[i-1][j-WV[i][0]]+WV[i][1])
-
-print(max(map(max,dp)))
+if __name__ == "__main__":boj12865()
