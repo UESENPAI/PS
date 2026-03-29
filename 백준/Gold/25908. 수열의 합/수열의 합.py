@@ -4,44 +4,24 @@ input = stdin.readline
 def boj25908():
     S, T = map(int, input().split())
 
-    tau = [0] * (T + 1)
-    spf = [0] * (T + 1)
-    power = [0] * (T + 1)
+    def cnt(x: int) -> int:
+        ret = 0
+        l = 1
 
-    tau[1] = 1
-    primes = []
+        while l <= x:
+            v = x // l
+            r = x // v
 
-    for i in range(2, T + 1):
-        if spf[i] == 0:
-            spf[i] = i
-            primes.append(i)
-            tau[i] = 2
-            power[i] = 1
+            even = (r>>1) - ((l - 1)>>1)
+            length = r - l + 1
+            odd = length - even
 
-        for p in primes:
-            if p * i > T:
-                break
+            ret += (even - odd) * v
 
-            spf[p * i] = p
+            l = r + 1
 
-            if i % p == 0:
-                power[p * i] = power[i] + 1
-                tau[p * i] = tau[i] // (power[i] + 1) * (power[i] + 2)
-                break
-            else:
-                power[p * i] = 1
-                tau[p * i] = tau[i]<<1
+        return ret
 
-    ans = 0
-
-    for t in range(S, T + 1):
-        if t & 1:
-            ans -= tau[t]
-        else:
-            k = (t & -t).bit_length() - 1
-            tau_m = tau[t] // (k + 1)
-            ans += (k - 1) * tau_m
-
-    print(ans)
+    print(cnt(T) - cnt(S - 1))
 
 if __name__ == '__main__': boj25908()
